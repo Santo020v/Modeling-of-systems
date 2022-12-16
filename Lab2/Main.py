@@ -14,12 +14,41 @@ def Task1():
 
 
 def Task3():
-    inputData = pd.read_excel('InputData.xlsx')
+    c = cr.Create(3)
+    p1 = pr.Process(3)
+    p2 = pr.Process(3)
+    p3 = pr.Process(3)
+
+    c.next_element = [p1]
+    p1.next_element = [p2]
+    p2.next_element = [p3]
+
+    p1.max_queue = 3
+    p2.max_queue = 3
+    p3.max_queue = 3
+
+    c.distribution = 'exp'
+    p1.distribution = 'exp'
+    p2.distribution = 'exp'
+    p3.distribution = 'exp'
+
+    c.name = 'Creator'
+    p1.name = 'Processor1'
+    p2.name = 'Processor2'
+    p3.name = 'Processor3'
+
+    model = m.Model([c, p1, p2, p3])
+    model.simulate(1000)
+
+
+def Task4():
+    inputData = pd.read_excel(r'C:\Users\veron\Desktop\Lab2\Lab2\InputData.xlsx')
     df = pd.DataFrame()
     rows = []
 
 
     for i in range(len(inputData)):
+        distribution = 'exp'
         c = cr.Create(inputData['delay_create'][i])
 
         p1 = pr.Process(inputData['delay_p1'][i])
@@ -30,10 +59,10 @@ def Task3():
         p2.max_queue = inputData['max_q2'][i]
         p3.max_queue = inputData['max_q3'][i]
 
-        c.distribution = inputData['distribution'][i]
-        p1.distribution = inputData['distribution'][i]
-        p2.distribution = inputData['distribution'][i]
-        p3.distribution = inputData['distribution'][i]
+        c.distribution = distribution
+        p1.distribution = distribution
+        p2.distribution = distribution
+        p3.distribution = distribution
 
         c.name = 'Creator'
         p1.name = 'Process 1'
@@ -55,7 +84,7 @@ def Task3():
                  'max_q1': inputData['max_q1'][i],
                  'max_q2': inputData['max_q2'][i],
                  'max_q': inputData['max_q3'][i],
-                 'distribution': inputData['distribution'][i],
+                 'distribution': distribution,
                  'p1_processed': p1.quantity,
                  'p1_failed': p1.failure,
                  'p2_processed': p2.quantity,
@@ -64,10 +93,10 @@ def Task3():
                  'p3_failed': p3.failure
                  }
 
-        rows.append({**param, **res})
+        rows.append({**param})
     df = pd.DataFrame(rows)
 
-    df.to_excel('OutputData.xlsx')
+    df.to_excel(r'C:\Users\veron\Desktop\Lab2\Lab2\Output.xlsx')
 
 
 def Task5():
@@ -82,23 +111,27 @@ def Task6():
     p1 = pr.Process(1)
     p2 = pr.Process(3)
     p3 = pr.Process(3)
+    p4 = pr.Process(3)
     c.next_element = [p1]
-    p1.next_element = [p2, p3]
+    p1.next_element = [p2, p3, p4]
 
-    p1.probability = ([0.7, 0.3])
+    p1.probability = ([0.3, 0.5, 0.2])
     p1.max_queue = 3
     p2.max_queue = 3
     p3.max_queue = 3
+    p4.max_queue = 3
     c.distribution = 'exp'
     p1.distribution = 'exp'
     p2.distribution = 'exp'
     p3.distribution = 'exp'
+    p4.distribution = 'exp'
     c.name = 'Creator'
     p1.name = 'Processor1'
     p2.name = 'Processor2'
     p3.name = 'Processor3'
+    p4.name = 'Processor4'
 
-    model = m.Model([c, p1, p2, p3])
+    model = m.Model([c, p1, p2, p3, p4])
     model.simulate(1000)
 
 def model(c,p1, maxQueue):
